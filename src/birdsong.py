@@ -29,15 +29,14 @@ def searchInArray(last, freq, data):
                  break
     return curr
 
-def writeSpectogramToFile(file, spectrum):
-    pos = 0
-    #print('In writeSpectoramToFile')
-    for freq in range(10, 8000, 53):
-        pos = searchInArray(pos, freq, spectrum.fs)
-        file.write(str(spectrum.hs[pos].real))
+def writeSignatureToFile(file, spectrum):
+    #print('In writeSignatureToFile')
+    for e in spectrum:
+        file.write(str(e['fs']))
+        file.write(',')
+        file.write(str(e['hs']))
         file.write(',')
     file.write('\n')
-
 
 print('BirdSong OSP Converter Application is starting')
 
@@ -47,7 +46,7 @@ fileList = glob.glob("../audio/birdsong/train/wav/*.wav")
 
 file = open('../output/birdsgenus.csv', 'w')
 
-for c in range(1, 153):
+for c in range(1, 42):
     colName = "COLUMN{}".format(c)
     file.write(colName)
     file.write(',')
@@ -70,7 +69,8 @@ with open('../audio/birdsong/train/birdsong.json') as json_file:
             # print(test_wave.ys.size)
             # print(test_wave.ts)
             spectrum = test_wave.make_spectrum()
-            writeSpectogramToFile(file, spectrum)
+            signature = spectrum.make_signature(20)
+            writeSignatureToFile(file, signature)
 
         except FileNotFoundError:
             print('File not found error %s' % fileName)
