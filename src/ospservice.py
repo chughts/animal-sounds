@@ -93,16 +93,15 @@ def read_wave_numbers(filepath):
         spectrum = test_wave.make_spectrum()
         app.logger.info('Have spectrum')
         if (spectrum) :
-            pos = 0
-            for freq in range(10, 8000, 53):
-                pos = searchInArray(pos, freq, spectrum.fs)
-                sounds.append(spectrum.hs[pos].real)
-
+            signature = spectrum.make_signature(20)
+            for e in signature:
+                sounds.append(e['fs'])
+                sounds.append(e['hs'])
     return sounds
 
 def generateColumnHeaders():
     columns = []
-    for c in range(2, 153):
+    for c in range(2, 42):
         colName = "COLUMN{}".format(c)
         columns.append(colName)
     return columns
