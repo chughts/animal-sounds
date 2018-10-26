@@ -23,10 +23,6 @@ def catOrDog(filename):
     else:
         return 'cat'
 
-def writeOSPtoFile(start, file, test_wave):
-    for s in range(start, 14700 + start, 100):
-        file.write(str(test_wave.ys[s]))
-        file.write(',')
 
 def searchInArray(last, freq, data):
     curr = last
@@ -49,14 +45,8 @@ def writeSpectogramToFile(file, spectrum):
     file.write('\n')
     #print('Last Postion found at %d' % pos)
 
-def runOSP(spectrumFile, file, fileName):
+def runOSP(spectrumFile, fileName):
     test_wave = thinkdsp.read_wave(fileName)
-    for start in [0, 5, 10, 15, 20, 25]:
-        file.write(catOrDog(fileName))
-        file.write(',')
-        writeOSPtoFile(start, file, test_wave)
-        file.write('\n')
-
     spectrum = test_wave.make_spectrum()
     spectrumFile.write(catOrDog(fileName))
     spectrumFile.write(',')
@@ -82,31 +72,21 @@ print('OSP Converter Application is starting')
 fileListCats = glob.glob("../audio/cats_dogs/train/cat/*.wav")
 fileListDogs = glob.glob("../audio/cats_dogs/train/dog/*.wav")
 
-file = open('../output/soundplusspecrum.csv', 'w')
 spectrumFile = open('../output/spectrum.csv', 'w')
 
 print('Writing Column Headers')
-for c in range(1, 149):
-    #colName = "'COLUMN{}'".format(c)
-    colName = "COLUMN{}".format(c)
-    file.write(colName)
-    file.write(',')
-    spectrumFile.write(colName)
-    spectrumFile.write(',')
-
-for c in range(149, 153):
+for c in range(1, 153):
     colName = "COLUMN{}".format(c)
     spectrumFile.write(colName)
     spectrumFile.write(',')
 
-file.write('\n')
 spectrumFile.write('\n')
 
 for animalList in [fileListCats, fileListDogs]:
     for fileName in animalList:
-        runOSP(spectrumFile, file, fileName)
+        runOSP(spectrumFile, fileName)
         # print(fileName)
 
-file.close()
+spectrumFile.close()
 
 print('OPS Converter Application is completing')
