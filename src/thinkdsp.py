@@ -20,6 +20,7 @@
 
 from wave import open as open_wave
 import numpy as np
+import heapq
 
 def read_wave(filename='sound.wav'):
     """Reads a wave file.
@@ -134,3 +135,15 @@ class Spectrum():
         self.fs = np.asanyarray(fs)
         self.framerate = framerate
         self.full = full
+
+
+    def make_signature(self, topn):
+        a = []
+        for pos in range(0, self.hs.shape[0]):
+            e = {}
+            e['fs'] = self.fs[pos]
+            e['hs'] = self.hs[pos].real
+            a.append(e)
+
+        topset = heapq.nlargest(topn, a, key=lambda s: s['hs'])
+        return topset

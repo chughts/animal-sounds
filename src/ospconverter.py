@@ -16,13 +16,11 @@
 import glob
 import thinkdsp
 
-
 def catOrDog(filename):
     if 'dog_barking' in fileName:
         return 'dog'
     else:
         return 'cat'
-
 
 def searchInArray(last, freq, data):
     curr = last
@@ -45,12 +43,27 @@ def writeSpectogramToFile(file, spectrum):
     file.write('\n')
     #print('Last Postion found at %d' % pos)
 
-def runOSP(spectrumFile, fileName):
+def writeSignatureToFile(file, spectrum):
+    #print('In writeSignatureToFile')
+    for e in spectrum:
+        file.write(str(e['fs']))
+        file.write(',')
+        file.write(str(e['hs']))
+        file.write(',')
+    file.write('\n')    
+
+def runOSP(spectrumFile, signatureFile, fileName):
     test_wave = thinkdsp.read_wave(fileName)
     spectrum = test_wave.make_spectrum()
     spectrumFile.write(catOrDog(fileName))
     spectrumFile.write(',')
+    signatureFile.write(catOrDog(fileName))
+    signatureFile.write(',')
     writeSpectogramToFile(spectrumFile, spectrum)
+    signature = spectrum.make_signature(20)
+    writeSignatureToFile(signatureFile, signature)
+
+    #print(signature)
 
     #print('New Spectrum with')
     #print('hs array shape ', spectrum.hs.shape)
@@ -73,6 +86,7 @@ fileListCats = glob.glob("../audio/cats_dogs/train/cat/*.wav")
 fileListDogs = glob.glob("../audio/cats_dogs/train/dog/*.wav")
 
 spectrumFile = open('../output/spectrum.csv', 'w')
+signatureFile = open('../output/signature.csv', 'w')
 
 print('Writing Column Headers')
 for c in range(1, 153):
@@ -80,13 +94,21 @@ for c in range(1, 153):
     spectrumFile.write(colName)
     spectrumFile.write(',')
 
+print('Writing Column Headers')
+for c in range(1, 42):
+    colName = "COLUMN{}".format(c)
+    signatureFile.write(colName)
+    signatureFile.write(',')
+
 spectrumFile.write('\n')
+signatureFile.write('\n')
 
 for animalList in [fileListCats, fileListDogs]:
     for fileName in animalList:
-        runOSP(spectrumFile, fileName)
+        runOSP(spectrumFile, signatureFile, fileName)
         # print(fileName)
 
 spectrumFile.close()
+signatureFile.close()
 
 print('OPS Converter Application is completing')
